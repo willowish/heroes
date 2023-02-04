@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { Navbar } from 'src/app/components/navbar/navbar';
 
 const StyledApp = styled.div`
   // Your style here
@@ -7,7 +8,7 @@ const StyledApp = styled.div`
 export function App() {
   return (
     <StyledApp>
-      <span>hello there</span>
+      <Navbar />
     </StyledApp>
   );
 }
