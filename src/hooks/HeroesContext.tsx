@@ -7,19 +7,19 @@ import { Hero } from 'src/model/hero.model';
 import { HttpRequestQueryParams } from 'src/model/httpRequestDetails.model';
 import { LoadingStatus } from 'src/model/loadingStatus.enum';
 import { Pagination } from 'src/model/pagination.model';
+
 type HeroesState = Pagination & { heroes: Hero[] } & { status: LoadingStatus };
-const LIMIT_PER_PAGE = 10;
 
 const defaultHeroesState: HeroesState = {
   heroes: [],
-  currentPage: 0,
+  currentPage: 1,
   totalElements: Infinity,
   status: LoadingStatus.IDLE
 };
 
 export const HeroesContext = createContext<{
   state: HeroesState;
-  fetchHeroes: (nameSearchQuery?: string) => Promise<void>;
+  fetchHeroes: (page?: number, nameSearchQuery?: string) => Promise<void>;
   fetchHeroById: (id: number) => Promise<void>;
   fetchHeroesByName: (names: string[]) => Promise<void>;
 }>({
@@ -28,23 +28,23 @@ export const HeroesContext = createContext<{
   fetchHeroById: () => Promise.resolve(),
   fetchHeroesByName: () => Promise.resolve()
 });
+const LIMIT_PER_PAGE = 20;
+
 export const HeroesProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const [state, setState] = useState<HeroesState>(defaultHeroesState);
 
-  const fetchHeroes = async (searchQuery?: string) => {
-    setState({ ...state, status: LoadingStatus.LOADING });
+  const fetchHeroes = async (page = 1, searchQuery?: string) => {
     try {
       const queryParams: HttpRequestQueryParams = {
-        page: state.currentPage + 1,
+        page: page,
         pageLimit: LIMIT_PER_PAGE,
         searchQuery
       };
-
       const { data: heroes, totalElements } = await HttpService.get<Hero[]>(ApiEndpoints.heroes, queryParams);
 
       setState(status => ({
         heroes: uniqBy([...status.heroes, ...heroes], 'id'),
-        currentPage: status.currentPage + 1,
+        currentPage: page,
         status: LoadingStatus.LOADED,
         totalElements: totalElements ?? Infinity,
       }));
