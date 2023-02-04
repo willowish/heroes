@@ -1,8 +1,8 @@
 import React from 'react';
 
 import { Card, CardBody, Heading, Text } from '@chakra-ui/react';
-import { Hero } from 'src/app/model/hero.model';
 import { Routes } from 'src/config/routes';
+import { Hero } from 'src/model/hero.model';
 import { getEndpointWithId } from 'src/utils/getEndpointWIthId';
 import { useLocation } from 'wouter';
 
@@ -14,7 +14,7 @@ export const HeroBasicInfo: React.FC<HeroBasicInfoProps> = ({ id, name, biograph
     setLocation(getEndpointWithId(Routes.hero, id));
   };
   return (
-    <Card w={'320px'} cursor={'pointer'} onClick={redirectToDetails}>
+    <Card w={'300px'} cursor={'pointer'} onClick={redirectToDetails}>
       <CardBody>
         <Heading as='h3' size='lg'>{name}</Heading>
         <Text fontWeight='bold'>Full Name:</Text>

@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { render, screen } from '@testing-library/react';
-import { HeroBasicInfo, HeroBasicInfoProps } from 'src/app/pages/MainPage/components/heroBasicInfo/HeroBasicInfo';
+import { HeroBasicInfo, HeroBasicInfoProps } from 'src/app/pages/mainPage/components/heroBasicInfo/heroBasicInfo';
 import '@testing-library/jest-dom';
 
 describe('HeroBasicInfo', () => {
