@@ -19,8 +19,8 @@ export const HeroBasicInfo: React.FC<HeroBasicInfoProps> = ({ id, name, biograph
         <Heading as='h3' size='lg'>{name}</Heading>
         <Text fontWeight='bold'>Full Name:</Text>
         <Text>{biography.fullName}</Text>
-        <Text fontWeight='bold'>Aliases:</Text>
-        <Text>{biography.aliases.join(', ')}</Text>
+        <Text fontWeight='bold'>Alter egos:</Text>
+        <Text>{biography.alterEgos}</Text>
         <Text fontWeight='bold'>Alignment:</Text>
         <Text>{biography.alignment}</Text>
       </CardBody>
