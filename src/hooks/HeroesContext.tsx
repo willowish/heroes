@@ -23,15 +23,15 @@ const defaultHeroesState: HeroesState = {
 export const HeroesContext = createContext<{
   state: HeroesState;
   fetchHeroes: (page?: number, nameSearchQuery?: string) => Promise<void>;
-  fetchHeroById: (id: number) => Promise<void>;
+  fetchHeroById: (id: number) => Promise<Hero | null>;
   fetchHeroesByName: (names: string) => Promise<void>;
   getHeroById: (id: number) => Hero | null;
 }>({
   state: defaultHeroesState,
   fetchHeroes: () => Promise.resolve(),
-  fetchHeroById: () => Promise.resolve(),
+  fetchHeroById: () => Promise.resolve(null),
   fetchHeroesByName: () => Promise.resolve(),
-  getHeroById: () => null,
+  getHeroById: () => null
 });
 const LIMIT_PER_PAGE = 20;
 
@@ -45,17 +45,21 @@ export const HeroesProvider: React.FC<PropsWithChildren> = ({ children }) => {
         pageLimit: LIMIT_PER_PAGE,
         searchQuery: state.searchQuery
       };
-      const { data: heroes, totalElements } = await HttpService.get<Hero[]>(ApiEndpoints.heroes, queryParams);
+      const {
+        data: heroes,
+        totalElements
+      } = await HttpService.getWithPagination<Hero[]>(ApiEndpoints.heroes, queryParams);
 
       setState(status => {
-        const array = [...status.heroesToDisplay, ...heroes.map(hero => hero.id)];
-        console.log(array);
+        const heroesToDisplay = [...new Set([
+          ...status.heroesToDisplay, ...heroes.map(hero => hero.id)
+        ])];
 
         return ({
           ...status,
           heroesMap: heroes
             .reduce((acc, hero) => ({ ...acc, [hero.id]: hero }), status.heroesMap),
-          heroesToDisplay: [...new Set(array)],
+          heroesToDisplay,
           currentPage: page,
           status: LoadingStatus.LOADED,
           totalElements: totalElements ?? Infinity
@@ -67,21 +71,30 @@ export const HeroesProvider: React.FC<PropsWithChildren> = ({ children }) => {
     }
   };
 
-  const fetchHeroById = async (id: number) => {
-    const { data: hero } = await HttpService.get<Hero>(ApiEndpoints.heroWithId(id));
+  const fetchHeroById = async (id: number): Promise<Hero | null> => {
+    if (state.heroesMap[id]) {
+      return state.heroesMap[id];
+    }
+    const hero = await HttpService.get<Hero>(ApiEndpoints.heroWithId(id));
+    console.log('hero', hero);
+
+    if (!hero) {
+      return null;
+    }
     setState(status => ({
       ...status,
       heroesMap: {
         ...status.heroesMap,
         [hero.id]: hero
       },
-      status: LoadingStatus.LOADED,
+      status: LoadingStatus.LOADED
     }));
+    return hero;
   };
 
   const getHeroById = (id: number): Hero | null => {
-      return state.heroesMap[id] ?? null;
-  }
+    return state.heroesMap[id] ?? null;
+  };
 
   const fetchHeroesByName = async (name: string) => {
     setState({ ...state, searchQuery: name, heroesToDisplay: [], currentPage: 1, totalElements: Infinity });

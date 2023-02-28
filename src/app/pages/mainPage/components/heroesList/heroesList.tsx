@@ -13,7 +13,6 @@ export const HeroesList: React.FC = () => {
   const fetchNextPage = useCallback(() => {
     fetchHeroes(state.currentPage + 1);
   }, [state.searchQuery, state.currentPage]);
-  console.log(state.heroesToDisplay);
 
   return (
     <Flex w='100%' justifyContent={'center'} flexDir={'column'} gap={'24px'}>
@@ -37,8 +36,6 @@ export const HeroesList: React.FC = () => {
       >
         {state.heroesToDisplay.map((id: number) => {
           const heroesMapElement = state.heroesMap[id];
-          console.log(heroesMapElement, id);
-
           return <HeroBasicInfo key={id} {...heroesMapElement} />;
         })}
         {state.heroesToDisplay.length === 0 && <EmptyList />}

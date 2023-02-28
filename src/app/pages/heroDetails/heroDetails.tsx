@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { Flex, Spinner, Text } from '@chakra-ui/react';
+import { Center, Flex, Heading, Spinner, Text } from '@chakra-ui/react';
 import { HeroImage } from 'src/app/pages/heroDetails/components/HeroImage';
 import { HeroNestedSection } from 'src/app/pages/heroDetails/components/heroNestedSection/heroNestedSection';
 import { Routes } from 'src/config/routes';
@@ -10,27 +10,25 @@ import { Hero } from 'src/model/hero.model';
 import { useRoute } from 'wouter';
 
 const HeroDetails: React.FC = () => {
-  const { fetchHeroById, getHeroById } = useHeroes();
+  const { fetchHeroById } = useHeroes();
   const [, params] = useRoute(Routes.hero);
   const [hero, setHero] = useState<Hero | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const heroId = params?.id ? Number(params.id) : null;
     if (heroId) {
-      const heroById = getHeroById(heroId);
-      console.log(heroById);
-      if (!heroById) {
-        fetchHeroById(heroId).then(() => {
-          const heroById1 = getHeroById(heroId);
-          setHero(heroById1)
-          console.log('elko', heroById1);
-
-        });
-      } else {
-        setHero(heroById);
-      }
+      fetchHeroById(heroId).then((fetchedHero) => {
+        setHero(fetchedHero);
+      }).finally(() => {
+        setLoading(false);
+      });
     }
   }, [params?.id]);
+
+  if (!loading && !hero) {
+    return <Center><Heading>Hero not found :/</Heading></Center>;
+  }
 
   if (!hero) {
     return <Spinner />;

@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 
 import { Box, Center, Spinner } from '@chakra-ui/react';
 import { HeroesList } from 'src/app/pages/mainPage/components/heroesList/heroesList';
+import { RandomHeroes } from 'src/app/pages/mainPage/components/randomHeroes/randomHeroes';
 import { useHeroes } from 'src/hooks/useHeroes';
 import { LoadingStatus } from 'src/model/loadingStatus.enum';
 
@@ -22,7 +23,7 @@ const MainPage: React.FC = () => {
 
   return (
     <Box p={5}>
-      {/*<RandomHeroes />*/}
+      <RandomHeroes />
       <HeroesList />
     </Box>
   );

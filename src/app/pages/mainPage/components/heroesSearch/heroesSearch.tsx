@@ -7,7 +7,6 @@ import { useHeroes } from 'src/hooks/useHeroes';
 export const HeroesSearch: React.FC = () => {
   const { fetchHeroesByName } = useHeroes();
   const debouncedSearch = debounce(async (searchText: string) => {
-    console.log(searchText);
     fetchHeroesByName(searchText);
   }, 300);
 
